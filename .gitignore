@@ -1,0 +1,17 @@
+# Node
+node_modules/
+.env
+npm-debug.log
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Editor configs
+.vscode/
+.idea/
+
+# Optional build folders (si más adelante hacés build del back)
+dist/
+build/
