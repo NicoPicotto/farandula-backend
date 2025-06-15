@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import villageRoutes from "./routes/village.routes";
 import threadsRoutes from "./routes/thread.routes";
 import replyRoutes from "./routes/reply.routes";
+import userRoutes from "./routes/user.routes";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 const app = express();
@@ -22,6 +24,8 @@ mongoose
 app.use("/villages", villageRoutes);
 app.use("/threads", threadsRoutes);
 app.use("/replies", replyRoutes);
+app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

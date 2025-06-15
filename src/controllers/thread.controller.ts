@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 import Thread from "../models/Thread";
 
 export const getThreadsByVillage = async (req: Request, res: Response) => {
@@ -15,7 +15,11 @@ export const getThreadsByVillage = async (req: Request, res: Response) => {
    }
 };
 
-export const createThread: RequestHandler = async (req, res, next) => {
+export const createThread = async (
+   req: Request,
+   res: Response,
+   next: NextFunction
+): Promise<void> => {
    const { title, body, village, createdBy } = req.body;
 
    if (!title || !body || !village || !createdBy) {
@@ -26,7 +30,8 @@ export const createThread: RequestHandler = async (req, res, next) => {
    try {
       const thread = await Thread.create({ title, body, village, createdBy });
       res.status(201).json(thread);
-   } catch (error) {
-      res.status(500).json({ message: "Error creating thread" });
+   } catch (error: any) {
+      console.error(error); // <— ver el error real
+      res.status(500).json({ message: error.message });
    }
 };

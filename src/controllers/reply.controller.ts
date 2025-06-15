@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response } from "express";
 import Reply from "../models/Reply";
 
 interface CreateReplyBody {
@@ -7,7 +7,10 @@ interface CreateReplyBody {
    createdBy: string;
 }
 
-export const getRepliesByThread: RequestHandler = async (req, res, next) => {
+export const getRepliesByThread = async (
+   req: Request<{ threadId: string }>,
+   res: Response
+): Promise<void> => {
    const { threadId } = req.params;
 
    try {
@@ -17,15 +20,15 @@ export const getRepliesByThread: RequestHandler = async (req, res, next) => {
       );
       res.json(replies);
    } catch (error) {
+      console.error("ERROR EN getRepliesByThread:", error);
       res.status(500).json({ message: "Error fetching replies" });
    }
 };
 
-export const createReply: RequestHandler<{}, any, CreateReplyBody> = async (
-   req,
-   res,
-   next
-) => {
+export const createReply = async (
+   req: Request<{}, any, CreateReplyBody>,
+   res: Response
+): Promise<void> => {
    const { body, thread, createdBy } = req.body;
 
    try {
