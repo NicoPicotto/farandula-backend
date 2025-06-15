@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import Thread from "../models/Thread";
 
 export const getThreadsByVillage = async (req: Request, res: Response) => {
@@ -16,11 +17,12 @@ export const getThreadsByVillage = async (req: Request, res: Response) => {
 };
 
 export const createThread = async (
-   req: Request,
+   req: AuthenticatedRequest,
    res: Response,
    next: NextFunction
 ): Promise<void> => {
-   const { title, body, village, createdBy } = req.body;
+   const { title, body, village } = req.body;
+   const createdBy = req.userId;
 
    if (!title || !body || !village || !createdBy) {
       res.status(400).json({ message: "Missing required fields" });
@@ -31,7 +33,7 @@ export const createThread = async (
       const thread = await Thread.create({ title, body, village, createdBy });
       res.status(201).json(thread);
    } catch (error: any) {
-      console.error(error); // <— ver el error real
+      console.error(error);
       res.status(500).json({ message: error.message });
    }
 };
