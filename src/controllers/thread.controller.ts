@@ -76,10 +76,14 @@ export const createThread = async (
 ): Promise<void> => {
    const { title, body, village } = req.body;
    const createdBy = req.userId;
+   console.log("UserId extraído del token:", createdBy);
 
-   if (!title || !body || !village || !createdBy) {
+   if (!title || !body || !village) {
       res.status(400).json({ message: "Missing required fields" });
       return;
+   }
+   if (!createdBy) {
+      res.status(401).json({ message: "User not authenticated" });
    }
 
    try {

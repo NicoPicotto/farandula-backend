@@ -18,7 +18,8 @@ export const authMiddleware = (
    const token = header.split(" ")[1];
    try {
       const payload = verifyToken(token);
-      req.userId = payload.id;
+      console.log("Payload del token:", payload);
+      req.userId = payload.userId;
       next();
    } catch {
       res.status(401).json({ message: "Unauthorized" });
