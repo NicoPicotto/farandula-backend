@@ -7,4 +7,5 @@ export interface IThread extends Document {
    createdBy: Types.ObjectId | Record<string, any>;
    createdAt: Date;
    updatedAt: Date;
+   views: number;
 }

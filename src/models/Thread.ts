@@ -7,6 +7,7 @@ const threadSchema = new Schema<IThread>(
       body: { type: String, required: true },
       village: { type: Schema.Types.ObjectId, ref: "Village", required: true },
       createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      views: { type: Number, default: 0 },
    },
    {
       timestamps: true,

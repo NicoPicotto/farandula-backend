@@ -6,11 +6,19 @@ import threadsRoutes from "./routes/thread.routes";
 import replyRoutes from "./routes/reply.routes";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
+
+app.use(
+   cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+   })
+);
 
 mongoose
    .connect(process.env.MONGO_URI!)

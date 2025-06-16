@@ -1,18 +1,71 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import Thread from "../models/Thread";
+import Reply from "../models/Reply";
 
-export const getThreadsByVillage = async (req: Request, res: Response) => {
+export const getThreadsByVillage: RequestHandler = async (req, res, next) => {
    const { villageId } = req.params;
 
    try {
-      const threads = await Thread.find({ village: villageId }).populate(
-         "createdBy",
-         "username"
+      const threads = await Thread.find({ village: villageId })
+         .populate("createdBy", "username")
+         .select("+views")
+         .lean();
+
+      const enrichedThreads = await Promise.all(
+         threads.map(async (thread) => {
+            const replyCount = await Reply.countDocuments({
+               thread: thread._id,
+            });
+            const lastReply = await Reply.findOne({ thread: thread._id })
+               .sort({ createdAt: -1 })
+               .select("createdAt");
+
+            return {
+               ...thread,
+               replyCount,
+               lastReplyDate: lastReply?.createdAt ?? null,
+            };
+         })
       );
-      res.json(threads);
+
+      res.json(enrichedThreads);
+      return;
    } catch (error) {
-      res.status(500).json({ message: "Error fetching threads" });
+      next(error);
+   }
+};
+
+export const getThreadById: RequestHandler = async (req, res, next) => {
+   const { threadId } = req.params;
+
+   try {
+      const thread = await Thread.findByIdAndUpdate(
+         threadId,
+         { $inc: { views: 1 } },
+         { new: true }
+      )
+         .populate("createdBy", "username")
+         .lean();
+
+      if (!thread) {
+         res.status(404).json({ message: "Thread not found" });
+         return;
+      }
+
+      const replyCount = await Reply.countDocuments({ thread: thread._id });
+      const lastReply = await Reply.findOne({ thread: thread._id })
+         .sort({ createdAt: -1 })
+         .select("createdAt");
+
+      res.json({
+         ...thread,
+         replyCount,
+         lastReplyDate: lastReply?.createdAt ?? null,
+      });
+      return;
+   } catch (error) {
+      next(error);
    }
 };
 
