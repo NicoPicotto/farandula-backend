@@ -5,16 +5,20 @@ import Reply from "../models/Reply";
 
 export const getAllVillages = async (req: Request, res: Response) => {
    try {
-      const villages = await Village.find();
+      const villages = await Village.find().sort({ name: 1 });
 
       const villagesWithCounts = await Promise.all(
          villages.map(async (village) => {
-            const threadCount = await Thread.countDocuments({
-               village: village._id,
-            });
+            const threads = await Thread.find({ village: village._id }).select(
+               "_id"
+            );
+            const threadIds = threads.map((t) => t._id);
+
             const replyCount = await Reply.countDocuments({
-               village: village._id,
+               thread: { $in: threadIds },
             });
+
+            const threadCount = threadIds.length;
 
             return {
                _id: village._id,

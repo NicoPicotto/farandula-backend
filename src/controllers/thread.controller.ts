@@ -29,6 +29,16 @@ export const getThreadsByVillage: RequestHandler = async (req, res, next) => {
          })
       );
 
+      enrichedThreads.sort((a, b) => {
+         const dateA = a.lastReplyDate
+            ? new Date(a.lastReplyDate).getTime()
+            : 0;
+         const dateB = b.lastReplyDate
+            ? new Date(b.lastReplyDate).getTime()
+            : 0;
+         return dateB - dateA;
+      });
+
       res.json(enrichedThreads);
       return;
    } catch (error) {
@@ -46,6 +56,7 @@ export const getThreadById: RequestHandler = async (req, res, next) => {
          { new: true }
       )
          .populate("createdBy", "username")
+         .populate("village", "name")
          .lean();
 
       if (!thread) {
