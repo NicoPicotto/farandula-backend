@@ -5,6 +5,7 @@ export interface IUser extends Document {
    email: string;
    passwordHash: string;
    avatar: string;
+   avatarColor: string;
    createdAt: Date;
    updatedAt: Date;
 }

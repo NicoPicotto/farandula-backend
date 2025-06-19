@@ -7,7 +7,7 @@ export const getAllUsers = async (
 ): Promise<void> => {
    try {
       const users = await User.find().select(
-         "username email avatar createdAt updatedAt"
+         "username email avatar avatarColor createdAt updatedAt"
       );
       res.json(users);
    } catch (error: any) {
@@ -22,7 +22,7 @@ export const getUserById = async (
    const { id } = req.params;
    try {
       const user = await User.findById(id).select(
-         "username email avatar createdAt updatedAt"
+         "username email avatar avatarColor createdAt updatedAt"
       );
       if (!user) {
          res.status(404).json({ message: "User not found" });
@@ -34,7 +34,6 @@ export const getUserById = async (
    }
 };
 
-
 import bcrypt from "bcrypt";
 
 export const updateUserProfile = async (
@@ -42,12 +41,13 @@ export const updateUserProfile = async (
    res: Response
 ): Promise<void> => {
    const { id } = req.params;
-   const { avatar, password } = req.body;
+   const { avatar, avatarColor, password } = req.body;
 
    try {
       const updateData: any = {};
 
       if (avatar) updateData.avatar = avatar;
+      if (avatarColor) updateData.avatarColor = avatarColor;
       if (password) {
          const saltRounds = 10;
          updateData.passwordHash = await bcrypt.hash(password, saltRounds);
@@ -55,7 +55,7 @@ export const updateUserProfile = async (
 
       const updatedUser = await User.findByIdAndUpdate(id, updateData, {
          new: true,
-      }).select("email avatar updatedAt");
+      }).select("_id email avatar avatarColor updatedAt");
 
       if (!updatedUser) {
          res.status(404).json({ message: "User not found" });

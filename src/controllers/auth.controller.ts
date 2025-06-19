@@ -58,6 +58,7 @@ export const login = async (
             username: user.username,
             email: user.email,
             avatar: user.avatar,
+            avatarColor: user.avatarColor,
          },
       });
    } catch (error: any) {

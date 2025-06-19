@@ -8,7 +8,7 @@ export const getThreadsByVillage: RequestHandler = async (req, res, next) => {
 
    try {
       const threads = await Thread.find({ village: villageId })
-         .populate("createdBy", "username avatar")
+         .populate("createdBy", "username avatar avatarColor")
          .select("+views")
          .lean();
 
@@ -55,7 +55,7 @@ export const getThreadById: RequestHandler = async (req, res, next) => {
          { $inc: { views: 1 } },
          { new: true }
       )
-         .populate("createdBy", "username avatar")
+         .populate("createdBy", "username avatar avatarColor")
          .populate("village", "name")
          .lean();
 

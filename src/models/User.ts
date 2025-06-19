@@ -7,6 +7,7 @@ const userSchema = new Schema<IUser>(
       email: { type: String, required: true, unique: true },
       passwordHash: { type: String, required: true },
       avatar: { type: String, default: "notionist-neutral" },
+      avatarColor: { type: String, default: "white" },
    },
    { timestamps: true }
 );
