@@ -2,6 +2,7 @@ export interface RegisterBody {
    username: string;
    email: string;
    password: string;
+   avatar: string;
 }
 
 export interface LoginBody {

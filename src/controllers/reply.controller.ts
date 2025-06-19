@@ -17,7 +17,7 @@ export const getRepliesByThread = async (
    try {
       const replies = await Reply.find({ thread: threadId }).populate(
          "createdBy",
-         "username"
+         "username avatar"
       );
       res.json(replies);
    } catch (error) {
