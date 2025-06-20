@@ -105,3 +105,35 @@ export const createThread = async (
       res.status(500).json({ message: error.message });
    }
 };
+
+export const updateThread: RequestHandler = async (
+   req: AuthenticatedRequest,
+   res,
+   next
+) => {
+   const { threadId } = req.params;
+   const { title, body } = req.body;
+   const userId = req.userId;
+   try {
+      const thread = await Thread.findById(threadId);
+
+      if (!thread) {
+         res.status(404).json({ message: "Thread not found" });
+         return;
+      }
+      // Sólo el creador puede editar
+      if (thread.createdBy.toString() !== userId) {
+         res.status(403).json({
+            message: "Not authorized to edit this thread",
+         });
+         return;
+      }
+      // Actualizar campos si vienen en el body
+      if (title !== undefined) thread.title = title;
+      if (body !== undefined) thread.body = body;
+      const updated = await thread.save();
+      res.json(updated);
+   } catch (error) {
+      next(error);
+   }
+};

@@ -18,7 +18,8 @@ export const register = async (
       }
       const passwordHash = await bcrypt.hash(password, 10);
       const avatar = req.body.avatar || "notionist-neutral";
-      const user = await User.create({ username, email, passwordHash, avatar });
+      const avatarColor = req.body.avatarColor;
+      const user = await User.create({ username, email, passwordHash, avatar, avatarColor });
       const token = generateToken((user._id as Types.ObjectId).toString());
       res.status(201).json({
          token,
@@ -27,6 +28,7 @@ export const register = async (
             username: user.username,
             email: user.email,
             avatar: user.avatar,
+            avatarColor: user.avatarColor,
          },
       });
    } catch (error: any) {
