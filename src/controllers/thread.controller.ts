@@ -5,11 +5,27 @@ import Reply from "../models/Reply";
 
 export const getThreadsByVillage: RequestHandler = async (req, res, next) => {
    const { villageId } = req.params;
+   const page = parseInt(req.query.page as string) || 1;
+   const limit = parseInt(req.query.limit as string) || 10;
+   const skip = (page - 1) * limit;
 
    try {
-      const threads = await Thread.find({ village: villageId })
+      const search = (req.query.search as string) || "";
+      const searchRegex = new RegExp(search, "i");
+
+      const query: Record<string, any> = {
+         village: villageId,
+      };
+
+      if (search) {
+         query.$or = [{ title: searchRegex }, { body: searchRegex }];
+      }
+
+      const threads = await Thread.find(query)
          .populate("createdBy", "username avatar avatarColor")
          .select("+views")
+         .skip(skip)
+         .limit(limit)
          .lean();
 
       const enrichedThreads = await Promise.all(
@@ -39,7 +55,19 @@ export const getThreadsByVillage: RequestHandler = async (req, res, next) => {
          return dateB - dateA;
       });
 
-      res.json(enrichedThreads);
+      const total = await Thread.countDocuments(query);
+      const totalPages = Math.ceil(total / limit);
+      const hasMore = page < totalPages;
+
+      res.json({
+         threads: enrichedThreads,
+         pagination: {
+            total,
+            totalPages,
+            currentPage: page,
+            hasMore,
+         },
+      });
       return;
    } catch (error) {
       next(error);

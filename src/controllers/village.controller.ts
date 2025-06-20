@@ -5,7 +5,12 @@ import Reply from "../models/Reply";
 
 export const getAllVillages = async (req: Request, res: Response) => {
    try {
-      const villages = await Village.find().sort({ name: 1 });
+      const search = (req.query.search as string) || "";
+      const searchRegex = new RegExp(search, "i");
+
+      const villages = await Village.find({
+         name: { $regex: searchRegex },
+      }).sort({ name: 1 });
 
       const villagesWithCounts = await Promise.all(
          villages.map(async (village) => {

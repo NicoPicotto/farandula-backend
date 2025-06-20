@@ -13,13 +13,31 @@ export const getRepliesByThread = async (
    res: Response
 ): Promise<void> => {
    const { threadId } = req.params;
+   const page = parseInt(req.query.page as string) || 1;
+   const limit = parseInt(req.query.limit as string) || 10;
+   const skip = (page - 1) * limit;
 
    try {
-      const replies = await Reply.find({ thread: threadId }).populate(
-         "createdBy",
-         "username avatar avatarColor"
-      );
-      res.json(replies);
+      const replies = await Reply.find({ thread: threadId })
+         .sort({ createdAt: 1 })
+         .skip(skip)
+         .limit(limit)
+         .populate("createdBy", "username avatar avatarColor")
+         .lean();
+
+      const total = await Reply.countDocuments({ thread: threadId });
+      const totalPages = Math.ceil(total / limit);
+      const hasMore = page < totalPages;
+
+      res.json({
+         replies,
+         pagination: {
+            total,
+            totalPages,
+            currentPage: page,
+            hasMore,
+         },
+      });
    } catch (error) {
       console.error("ERROR EN getRepliesByThread:", error);
       res.status(500).json({ message: "Error fetching replies" });
