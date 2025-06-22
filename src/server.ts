@@ -35,7 +35,7 @@ app.use(
 
 // Handle preflight OPTIONS requests
 app.options(
-   "*",
+   "/*",
    cors({
       origin: (origin, callback) => {
          if (!origin || whitelist.includes(origin)) {
