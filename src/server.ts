@@ -13,9 +13,36 @@ const app = express();
 
 app.use(express.json());
 
+// CORS configuration: allow production domains and handle preflight requests
+const whitelist = [
+   "https://farandulacordobesa.com.ar",
+   "https://www.farandulacordobesa.com.ar",
+];
+
 app.use(
    cors({
-      origin: "http://localhost:5173",
+      origin: (origin, callback) => {
+         // allow requests with no origin (e.g. mobile apps, Postman)
+         if (!origin) return callback(null, true);
+         if (whitelist.includes(origin)) {
+            return callback(null, true);
+         }
+         callback(new Error("CORS policy: Origin not allowed"));
+      },
+      credentials: true,
+   })
+);
+
+// Handle preflight OPTIONS requests
+app.options(
+   "*",
+   cors({
+      origin: (origin, callback) => {
+         if (!origin || whitelist.includes(origin)) {
+            return callback(null, true);
+         }
+         callback(new Error("CORS preflight: Origin not allowed"));
+      },
       credentials: true,
    })
 );

@@ -98,7 +98,7 @@ export const requestPasswordReset = async (
          expiresIn: "1h",
       });
 
-      const resetLink = `http://localhost:5173/cambiar-password?token=${token}&email=${email}`;
+      const resetLink = `https://farandulacordobesa.com.ar/cambiar-password?token=${token}&email=${email}`;
 
       const { data, error } = await resend.emails.send({
          from: "Farandula <no-reply@farandulacordobesa.com.ar>",
