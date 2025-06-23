@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import User from "../models/User";
 
 export const getAllUsers = async (
@@ -15,21 +16,27 @@ export const getAllUsers = async (
    }
 };
 
-export const getUserById = async (
-   req: Request,
+export const getMyProfile = async (
+   req: AuthenticatedRequest,
    res: Response
 ): Promise<void> => {
-   const { id } = req.params;
+   const userId = (req as any).userId;
+
    try {
-      const user = await User.findById(id).select(
+      console.log("userId desde token:", userId);
+
+      const user = await User.findById(userId).select(
          "username email avatar avatarColor createdAt updatedAt"
       );
+
       if (!user) {
          res.status(404).json({ message: "User not found" });
          return;
       }
+
       res.json(user);
    } catch (error: any) {
+      console.error("Error al buscar el usuario:", error);
       res.status(500).json({ message: "Error fetching user" });
    }
 };

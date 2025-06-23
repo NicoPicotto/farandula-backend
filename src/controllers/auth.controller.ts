@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import User from "../models/User";
-import { generateToken } from "../utils/jtw";
+import { generateToken } from "../utils/jwt";
 import { Types } from "mongoose";
 import { Resend } from "resend";
 import jwt from "jsonwebtoken";

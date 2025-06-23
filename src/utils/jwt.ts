@@ -9,6 +9,12 @@ export const generateToken = (userId: string): string => {
    return jwt.sign({ userId }, SECRET, { expiresIn: "30d" });
 };
 
-export const verifyToken = (token: string): any => {
-   return jwt.verify(token, SECRET);
+interface JwtPayload {
+   userId: string;
+   iat: number;
+   exp: number;
+}
+
+export const verifyToken = (token: string): JwtPayload => {
+   return jwt.verify(token, SECRET) as JwtPayload;
 };
