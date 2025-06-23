@@ -17,7 +17,7 @@ app.use(express.json());
 const whitelist = [
    "https://farandulacordobesa.com.ar",
    "https://www.farandulacordobesa.com.ar",
-   "http://localhost:5173",
+   // "http://localhost:5173",
 ];
 
 app.use(
