@@ -1,11 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import villageRoutes from "./routes/village.routes";
-import threadsRoutes from "./routes/thread.routes";
-import replyRoutes from "./routes/reply.routes";
-import userRoutes from "./routes/user.routes";
-import authRoutes from "./routes/auth.routes";
+import villageRoutes from "./src/routes/village.routes";
+import threadsRoutes from "./src/routes/thread.routes";
+import replyRoutes from "./src/routes/reply.routes";
+import userRoutes from "./src/routes/user.routes";
+import authRoutes from "./src/routes/auth.routes";
 import cors from "cors";
 
 dotenv.config();
@@ -63,7 +63,13 @@ app.use("/replies", replyRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-   console.log(`Server running on port ${PORT}`);
-});
+// For Vercel deployment - export the app
+export default app;
+
+// For local development - start server if not in production
+if (process.env.NODE_ENV !== 'production') {
+   const PORT = process.env.PORT || 3000;
+   app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+   });
+}
